@@ -128,7 +128,7 @@ git clone https://github.com/cdcseacave/openMVS.git
 
 #Build OpenMVS
 mkdir openMVS_build && cd openMVS_build
-cmake . ../openMVS -DCMAKE_BUILD_TYPE=Release -DVCG_ROOT="$main_path/vcglib"
+cmake . ../openMVS -DCMAKE_BUILD_TYPE=Release -DVCG_ROOT="$main_path/vcglib" -WITH_PNG=ON -WITH_JPEG=ON
 
 #Alternatively, build using XCode
 cmake . ../openMVS -G "Xcode" -DCMAKE_BUILD_TYPE=Release -DVCG_ROOT="$main_path/vcglib"

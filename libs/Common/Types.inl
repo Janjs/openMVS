@@ -3778,9 +3778,6 @@ namespace boost {
 // include headers that implement compressed serialization support
 #include <boost/iostreams/filtering_streambuf.hpp>
 #include <boost/iostreams/filter/zlib.hpp>
-#if BOOST_VERSION >= 106900
-#include <boost/iostreams/filter/zstd.hpp>
-#endif
 #if defined(_MSC_VER)
 #pragma warning (pop)
 #endif
@@ -3790,13 +3787,8 @@ enum ARCHIVE_TYPE {
 	ARCHIVE_TEXT = 0,
 	ARCHIVE_BINARY,
 	ARCHIVE_BINARY_ZIP,
-	ARCHIVE_BINARY_ZSTD,
 	ARCHIVE_LAST,
-	#if BOOST_VERSION >= 106900
-	ARCHIVE_DEFAULT = ARCHIVE_BINARY_ZSTD
-	#else
 	ARCHIVE_DEFAULT = ARCHIVE_BINARY_ZIP
-	#endif
 };
 
 // export the current state of the given reconstruction object
@@ -3821,16 +3813,6 @@ bool SerializeSave(const TYPE& obj, std::ofstream& fs, ARCHIVE_TYPE type, unsign
 		boost::archive::binary_oarchive ar(ffs, flags);
 		ar << obj;
 		break; }
-	#if BOOST_VERSION >= 106900
-	case ARCHIVE_BINARY_ZSTD: {
-		namespace io = boost::iostreams;
-		io::filtering_streambuf<io::output> ffs;
-		ffs.push(io::zstd_compressor(io::zstd::best_speed));
-		ffs.push(fs);
-		boost::archive::binary_oarchive ar(ffs, flags);
-		ar << obj;
-		break; }
-	#endif
 	default:
 		VERBOSE("error: Can not save the object, invalid archive type");
 		return false;
@@ -3871,16 +3853,6 @@ bool SerializeLoad(TYPE& obj, std::ifstream& fs, ARCHIVE_TYPE type, unsigned fla
 			boost::archive::binary_iarchive ar(ffs, flags);
 			ar >> obj;
 			break; }
-		#if BOOST_VERSION >= 106900
-		case ARCHIVE_BINARY_ZSTD: {
-			namespace io = boost::iostreams;
-			io::filtering_streambuf<io::input> ffs;
-			ffs.push(io::zstd_decompressor());
-			ffs.push(fs);
-			boost::archive::binary_iarchive ar(ffs, flags);
-			ar >> obj;
-			break; }
-		#endif
 		default:
 			VERBOSE("error: Can not load the object, invalid archive type");
 			return false;

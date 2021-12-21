@@ -50,6 +50,7 @@ SET(OpenMVS_MAX_CUDA_COMPATIBILITY OFF CACHE BOOL "Build for maximum CUDA device
 
 # Define helper functions and macros.
 INCLUDE(build/Utils.cmake)
+INCLUDE(FindPkgConfig)
 
 # Init session with macros defined in Utils.cmake
 GetOperatingSystemArchitectureBitness(SYSTEM)
